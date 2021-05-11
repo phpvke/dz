@@ -21,5 +21,10 @@ Route::post('/signup/', 'App\Http\Controllers\UserController@SignUp');
 Route::post('/signin/', 'App\Http\Controllers\UserController@SignIn');
 Route::post('/recover/', 'App\Http\Controllers\UserController@recoverPassword');
 Route::post('/logout/', 'App\Http\Controllers\UserController@logout');
+Route::post('/prodadd/', 'App\Http\Controllers\ProductController@addProduct');
+Route::post('/proddel/', 'App\Http\Controllers\ProductController@deleteProduct');
+Route::post('/prodchange/', 'App\Http\Controllers\ProductController@changeProduct');
+
+
 
 

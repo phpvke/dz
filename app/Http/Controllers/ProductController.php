@@ -12,7 +12,7 @@ class ProductController extends Controller
     public function addProduct(Request $req)
     {
     	$validator = Validator::make($req->all(), [
-			"name" => "required|unique:products",
+			"name" => "required",
 			"quantity" => "required",
 			"price" => "required",
 		]);
@@ -33,8 +33,12 @@ class ProductController extends Controller
 
     public function deleteProduct(Request $req)
     {
+    	$product = Product::where("id", $req->id)->first();
 
-    	Product::where("name", $req->name)->delete();
+    	if(!$product)
+	    	return response()->json(["message" => "Товар не существовал или был удалён ранее"], 201);
+
+    	Product::where("id", $req->id)->delete();
     	return response()->json([
 			"message" => "Вы успешно удалили товар",
 		]);
@@ -56,21 +60,18 @@ class ProductController extends Controller
 				]);
 		}
 
-		$product = Product::where("name", $req->name)->first();
+		$product = Product::where("id", $req->id)->first();
 
-		if($product)
-		{
-			if($req->name && $product->name)
-			{
-				$product->quantity = $req->quantity;
-				$product->price = $req->price;
-				$product->save();
-				return response()->json(
-					[
-						"message" => "Вы успешно изменили данные товара"
-					]
-				);
-			}
-		}
+		if(!$product)
+			return response()->json(["message" => "Товар не существует или неверно указан id"], 301);
+
+		$product->name = $req->name;
+		$product->quantity = $req->quantity;
+		$product->price = $req->price;
+		$product->save();
+		return response()->json(
+			[
+				"message" => "Вы успешно изменили данные товара"
+			]);
     }
 }

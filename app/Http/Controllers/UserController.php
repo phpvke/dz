@@ -27,10 +27,14 @@ class UserController extends Controller
 				]);
 		}
 		$mas_users = $req->all();
-		$mas_users += ['recovery_code' => random_int(1000, 9999)];
+		$mas_users += 
+		[
+			'recovery_code' => random_int(1000, 9999),
+			'admin' => 'no',
+		];
 		User::create($mas_users);
 		return response()->json([
-			"message" => "Вы зарегистрированы, сохраниет данный код на случай потери пароля",
+			"message" => "Вы зарегистрированы, сохраните данный код на случай потери пароля",
 			"recovery_code" => $mas_users["recovery_code"]
 		]);
 	}

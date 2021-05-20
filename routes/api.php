@@ -24,6 +24,7 @@ Route::post('/logout/', 'App\Http\Controllers\UserController@logout');
 Route::post('/prodadd/', 'App\Http\Controllers\ProductController@addProduct');
 Route::post('/proddel/', 'App\Http\Controllers\ProductController@deleteProduct');
 Route::post('/prodchange/', 'App\Http\Controllers\ProductController@changeProduct');
+Route::post('/prodsearch/', 'App\Http\Controllers\ProductController@searchProduct');
 
 
 

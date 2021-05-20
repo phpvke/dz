@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,6 +16,7 @@ class ProductController extends Controller
 			"name" => "required",
 			"quantity" => "required",
 			"price" => "required",
+			"login" => "required",
 		]);
 
 		if($validator->fails()) 
@@ -24,6 +26,13 @@ class ProductController extends Controller
 					"message" => $validator->errors(),
 				]);
 		}
+		$user = User::where("login", $req->login)->first();
+
+		if(!$user->api_token)
+			return response()->json(["message" => "Вам нужно авторизоваться"]);
+
+		if($user->admin == "no")
+			return response()->json(["message" => "Вы не обладаете нужными правами"]);
 
 		Product::create($req->all());
 		return response()->json([
@@ -33,6 +42,14 @@ class ProductController extends Controller
 
     public function deleteProduct(Request $req)
     {
+    	$user = User::where("login", $req->login)->first();
+
+		if(!$user->api_token)
+			return response()->json(["message" => "Вам нужно авторизоваться"]);
+
+		if($user->admin == "no")
+			return response()->json(["message" => "Вы не обладаете нужными правами"]);
+
     	$product = Product::where("id", $req->id)->first();
 
     	if(!$product)
@@ -50,6 +67,7 @@ class ProductController extends Controller
 			"name" => "required",
 			"quantity" => "required",
 			"price" => "required",
+			"login" => "required",
 		]);
 
 		if($validator->fails()) 
@@ -59,7 +77,14 @@ class ProductController extends Controller
 					"message" => $validator->errors(),
 				]);
 		}
+		$user = User::where("login", $req->login)->first();
 
+		if(!$user->api_token)
+			return response()->json(["message" => "Вам нужно авторизоваться"]);
+
+		if($user->admin == "no")
+			return response()->json(["message" => "Вы не обладаете нужными правами"]);
+		
 		$product = Product::where("id", $req->id)->first();
 
 		if(!$product)
@@ -73,5 +98,26 @@ class ProductController extends Controller
 			[
 				"message" => "Вы успешно изменили данные товара"
 			]);
+    }
+
+    public function searchProduct(Request $req)
+    {
+    	if(!$req)
+    		return response()->json(
+    			[
+    				"message" => "Вы ничего не ввели в строку поиска"
+    			]);
+
+    	$search = $req->name;
+
+    	$massearch = Product::where('name', 'LIKE', "%{$search}%")->get();
+
+    	if(empty($massearch))
+    		return response()->json(
+    			[
+    				"message" => "Ничего не найдено"
+    			]);
+
+    	return response()->json($massearch);
     }
 }

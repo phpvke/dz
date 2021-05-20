@@ -23,6 +23,7 @@ class User extends Authenticatable
         'login',
         'recovery_code',
         'new_password',
+        'admin'
     ];
 
     /**
